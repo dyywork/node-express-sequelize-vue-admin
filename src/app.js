@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-const Router = require('../seeders/api');
+const Router = require('../router/api');
 
 // const models = require('../models');
 
