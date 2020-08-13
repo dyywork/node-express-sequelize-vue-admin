@@ -14,7 +14,11 @@ if (config.use_env_variable) {
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
-
+sequelize.authenticate().then(() => {
+  console.log('数据库连接成功');
+}).catch(err => {
+  console.error(`数据库连接${err}`);
+});
 fs
   .readdirSync(__dirname)
   .filter(file => {
