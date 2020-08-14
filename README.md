@@ -27,7 +27,7 @@ module.exports = {
   }
 };
 ```
-## 3.删除新增数据库字段
+## 3.删除新增数据库字段  [queryInterface API](https://sequelize.org/v5/class/lib/query-interface.js~QueryInterface.html)
 - 假如有个user表我们先运行
 ```bash
 npx sequelize migration:generate --name=update-user
