@@ -64,3 +64,4 @@ npx sequelize db:migrate --to xxxxxxxxx-update-user.js
 ```bash
 npx sequelize db:migrate:undo
 ```
+
