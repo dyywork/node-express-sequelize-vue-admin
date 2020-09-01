@@ -1,10 +1,34 @@
 const express = require('express');
+const fs = require('fs');
+const multer = require('multer');
 const router = express.Router();
+
+
 const Sequelize = require('sequelize');
 
 const {Op} = Sequelize;
 
 const {User} = require('../../models');
+
+
+const upload = multer({ dest: 'uploads' });
+
+// 头像上传
+router.post('/img', upload.single('file'), async (req, res, next) => {
+  try {
+    fs.renameSync(req.file.path, `uploads/${req.body.id}${req.file.originalname}`);
+    await User.update({url: `http://${req.headers.host}/uploads/${req.body.id}${req.file.originalname}`}, {where: {id:req.body.id}}).then(files => {
+      res.json({
+        msg: '成功',
+        data: files,
+      })
+    })
+  }
+  catch (err) {
+    next();
+  }
+});
+
 
 // 用户分页列表查询
 router.get('/list', async (req, res, next) => {
@@ -101,6 +125,27 @@ router.get('/:id', async (req, res, next) => {
         message: '查询成功',
         user,
       })
+    })
+  }
+  catch (err) {
+    next();
+  }
+});
+
+// 登录
+router.post('/login', async (req, res, next) => {
+  try{
+    await User.findOne({where: {userName: req.body.userName}}).then(user => {
+      if (user.password === req.body.password) {
+        res.json({
+          message: '登录成功',
+          data: user,
+        })
+      } else {
+        res.json({
+          message: '用户名或密码错误',
+        })
+      }
     })
   }
   catch (err) {
