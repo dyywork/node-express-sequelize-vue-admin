@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
 const router = express.Router();
+const xlsx = require('node-xlsx');
 
 
 const Sequelize = require('sequelize');
@@ -12,6 +13,8 @@ const {User} = require('../../models');
 
 
 const upload = multer({ dest: 'uploads' });
+
+
 
 // 头像上传
 router.post('/img', upload.single('file'), async (req, res, next) => {
@@ -66,6 +69,47 @@ router.get('/list', async (req, res, next) => {
   }
 });
 
+// 导出用户列表
+router.get('/export/list', async (req, res, next) => {
+  try {
+    const {userName, name} = req.query;
+    await User.findAll({
+      where: {
+        [Op.or]: [
+          {
+            userName: {
+              [Op.like]:`%${userName}%`,
+            }
+          },
+          {
+            name: {
+              [Op.like]:`%${name}%`,
+            }
+          }
+        ]
+      },
+    }).then(list => {
+      const dataList = [];
+      const titleList = ['用户名', '密码', '邮箱'];
+      dataList.push(titleList);
+      list.forEach(item => {
+        const arr = [];
+        arr.push(item.userName);
+        arr.push(item.password);
+        arr.push(item.email);
+        dataList.push(arr);
+      })
+      const buffer = xlsx.build([{name: 'sheet1', data: dataList}]);
+      const name = `user${new Date().toLocaleDateString()}`
+      fs.writeFileSync(`./uploads/${name}.xlsx`, buffer, {'flag': 'w'});
+      res.download(`./uploads/${name}.xlsx`);
+    })
+  }
+  catch (e) {
+    next()
+  }
+})
+
 // 创建用户
 router.post('/create', async (req, res, next) => {
   try {
@@ -85,6 +129,7 @@ router.post('/create', async (req, res, next) => {
     next();
   }
 });
+
 
 // 删除用户
 router.delete('/:id', async (req, res, next) => {
