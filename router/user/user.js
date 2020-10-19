@@ -3,6 +3,7 @@ const fs = require('fs');
 const multer = require('multer');
 const router = express.Router();
 const xlsx = require('node-xlsx');
+const jwt = require('jsonwebtoken');
 
 
 const Sequelize = require('sequelize');
@@ -13,7 +14,6 @@ const {User} = require('../../models');
 
 
 const upload = multer({ dest: 'uploads' });
-
 
 
 // 头像上传
@@ -110,10 +110,28 @@ router.get('/export/list', async (req, res, next) => {
   }
 })
 
+/**
+ * @api {POST} /user/create getUserInfof
+ * @apiGroup User
+ *
+ * @apiParam {String} name 登aa录名1
+ * @apiParamExample {json} Request-Example
+ * {
+ *  "userName": "Eve"
+ * }
+ *
+ * @apiSuccessExample  {json} Response-Example
+ * {
+ *   "userName": "adfaafadadfadf",
+ *   "createTime": "1568901681"
+ *   "updateTime": "1568901681"
+ * }
+ */
 // 创建用户
 router.post('/create', async (req, res, next) => {
   try {
-     await User.findOrCreate({where: {userName: req.body.userName}, defaults: req.body}).then(([user, created]) => {
+    const token = jwt.sign({foo: 'bar'}, 'dingyongya');
+     await User.findOrCreate({where: {userName: req.body.userName}, defaults: {...req.body, token, status: 'ok'}}).then(([user, created]) => {
        if (created) {
          res.json({
            message: '创建成功',

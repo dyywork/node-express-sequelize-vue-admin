@@ -5,12 +5,13 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class List extends Model {
     /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
+     * 定义关联的辅助方法.
+     * 此方法不是Sequelize生命周期的一部分.
+     * models/index文件将自动调用此方法.
      */
     static associate(models) {
       // define association here
+      console.log(models)
     }
   };
   List.init({
