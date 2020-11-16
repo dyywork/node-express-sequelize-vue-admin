@@ -29,5 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
   });
+  (async () => {
+    await User.sync({ alter: true })
+  })()
   return User;
 };
