@@ -10,7 +10,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // console.log(models)
+      // const {Message, User} = models;
+      // console.log(Message)
+      // console.log(User)
+      // Message.belongsTo(User);
+      // (async () => {
+      //   await User.hasOne(Message);
+      //   await Message.belongsTo(User);
+      // })()
     }
   };
   Message.init({
@@ -25,5 +33,8 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Message',
   });
+  // (async () => {
+  //   await Message.sync({ force: true })
+  // })()
   return Message;
 };

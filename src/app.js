@@ -13,7 +13,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/uploads', express.static('uploads'));
 app.use('/doc', express.static('doc'));
-
 Router(app);
 
 app.listen(3000, () => {

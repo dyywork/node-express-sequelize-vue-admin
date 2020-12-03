@@ -3,40 +3,34 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Duty extends Model {
     /**
      * 定义关联的辅助方法。
-     * This method is not a part of Sequelize lifecycle.
+     * 此方法不是Sequelize生命周期的一部分。
      * 模型/索引文件将自动调用此方法。
      */
     static associate(models) {
-      // 在这里定义关联
-      // console.log(models)
-      const { Roles } = models;
-      User.hasMany(Roles);
+      const {Duty, Roles} = models;
+      Duty.belongsToMany(Roles, {through: 'rolesDuty'})
       // sequelize.sync({alter: true})
     }
   };
-  User.init({
-    userName: { type: DataTypes.STRING, unique: true },
-    password: DataTypes.STRING,
+  Duty.init({
+    code: DataTypes.STRING,
     name: DataTypes.STRING,
     age: DataTypes.INTEGER,
     email: DataTypes.STRING,
     url: DataTypes.STRING,
-    token: DataTypes.STRING,
     address: DataTypes.STRING,
     type: DataTypes.STRING,
     status: DataTypes.STRING,
     currentAuthority: DataTypes.STRING,
-    timeout: DataTypes.DATE
   }, {
-    timestamps: true,
     sequelize,
-    modelName: 'User',
+    modelName: 'Duty',
   });
   // (async () => {
-  //   await User.sync({ alter: true })
+  //   await Duty.sync({ alter: true })
   // })()
-  return User;
+  return Duty;
 };

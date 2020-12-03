@@ -130,8 +130,7 @@ router.get('/export/list', async (req, res, next) => {
 // 创建用户
 router.post('/create', async (req, res, next) => {
   try {
-    const token = jwt.sign({foo: 'bar'}, 'dingyongya');
-     await User.findOrCreate({where: {userName: req.body.userName}, defaults: {...req.body, token, status: 'ok'}}).then(([user, created]) => {
+     await User.findOrCreate({where: {userName: req.body.userName}, defaults: {...req.body, status: 'ok'}}).then(([user, created]) => {
        if (created) {
          res.json({
            message: '创建成功',
@@ -198,11 +197,16 @@ router.get('/:id', async (req, res, next) => {
 // 登录
 router.post('/login', async (req, res, next) => {
   try{
+
     await User.findOne({where: {userName: req.body.userName}}).then(user => {
       if (user.password === req.body.password) {
-        res.json({
-          message: '登录成功',
-          data: user,
+        const token = jwt.sign({name: user.userName, id: user.id}, 'dingyongya');
+        User.update({token, timeout: (new Date().getTime())+ 60*60*1000},{where:{id: user.id}}).then(() => {
+          user.token = token;
+          res.json({
+            message: '登录成功',
+            user
+          })
         })
       } else {
         res.json({
@@ -212,7 +216,7 @@ router.post('/login', async (req, res, next) => {
     })
   }
   catch (err) {
-    next();
+    next(err);
   }
 });
 
