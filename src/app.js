@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
-const Router = require('../router/api');
+const Router = require('../controller/api');
 
 
 app.use(bodyParser.json());
