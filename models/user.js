@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -29,7 +30,21 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     status: DataTypes.STRING,
     currentAuthority: DataTypes.STRING,
-    timeout: DataTypes.DATE
+    timeout: DataTypes.DATE,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue:new Date(),
+      get(){
+        return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
+      }
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue:new Date(),
+      get() {
+        return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss');
+      }
+    }
   }, {
     timestamps: true,
     sequelize,

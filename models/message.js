@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
   class Message extends Model {
     /**
@@ -28,9 +29,24 @@ module.exports = (sequelize, DataTypes) => {
     magkey: DataTypes.STRING,
     type: DataTypes.STRING,
     status: DataTypes.STRING,
-    position: DataTypes.STRING
+    position: DataTypes.STRING,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue:new Date(),
+      get(){
+        return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
+      }
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue:new Date(),
+      get() {
+        return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss');
+      }
+    }
   }, {
     sequelize,
+    timestamps: true,
     modelName: 'Message',
   });
   // (async () => {

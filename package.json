@@ -30,7 +30,8 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-vue": "^6.2.2",
     "gulp": "^4.0.2",
-    "gulp-apidoc": "^0.2.8"
+    "gulp-apidoc": "^0.2.8",
+    "moment": "^2.29.1"
   },
   "apidoc": {
     "title": "接口文档",

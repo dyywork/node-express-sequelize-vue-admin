@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const verifyToken = require('../../utils/verificationToken');
 const {
   createParentMenu,
   getList,
@@ -10,7 +9,7 @@ const {
 // 创建
 router.post('/createParentMenu', createParentMenu);
 
-router.get('/list', verifyToken, getList);
+router.get('/list', getList);
 
 router.delete('/delete/:id', deleteMenu)
 

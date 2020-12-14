@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
   class Duty extends Model {
     /**
@@ -12,21 +13,41 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       const {Duty, Roles} = models;
       Duty.belongsToMany(Roles, {through: 'rolesDuty'})
-      // sequelize.sync({alter: true})
+//  sequelize.sync({alter: true})
     }
   };
   Duty.init({
-    code: DataTypes.STRING,
+    code: {
+      type:DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: '职责编码不能为空'
+        }
+      }
+    },
     name: DataTypes.STRING,
-    age: DataTypes.INTEGER,
-    email: DataTypes.STRING,
-    url: DataTypes.STRING,
-    address: DataTypes.STRING,
-    type: DataTypes.STRING,
+    creator: DataTypes.STRING,
+    creatorId: DataTypes.STRING,
     status: DataTypes.STRING,
-    currentAuthority: DataTypes.STRING,
+    currentAuthority: DataTypes.STRING(1234),
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue:new Date(),
+      get(){
+        return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
+      }
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue:new Date(),
+      get() {
+        return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss');
+      }
+    }
   }, {
     sequelize,
+    timestamps: true,
     modelName: 'Duty',
   });
   // (async () => {
