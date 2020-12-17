@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       const {SubMenu} = models;
-      ParentMenu.hasMany(SubMenu, { as: 'children', foreignKey: 'ParentMenuId' });
+      // ParentMenu.hasMany(SubMenu, { as: 'children', foreignKey: 'ParentMenuId' });
+      ParentMenu.belongsToMany(SubMenu, { through: 'ParentSubMenu', as: 'children' });
       // sequelize.sync({alter: true})
     }
   };

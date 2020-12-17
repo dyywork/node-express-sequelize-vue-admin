@@ -12,8 +12,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       const {ParentMenu} = models;
-      SubMenu.belongsTo(ParentMenu);
-      // sequelize.sync({alter: true})
+      // SubMenu.belongsTo(ParentMenu);
+      SubMenu.belongsToMany(ParentMenu, { through: 'ParentSubMenu' });
+      //  sequelize.sync({alter: true})
     }
   };
   SubMenu.init({

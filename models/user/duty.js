@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     creatorId: DataTypes.STRING,
     status: DataTypes.STRING,
     currentAuthority: DataTypes.STRING(1234),
+    menuId: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),

@@ -14,13 +14,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use('/uploads', express.static('uploads'));
 app.use('/doc', express.static('doc'));
 const whitelist = ['/api/user/login', '/api/user/create'];
-app.all('/api/*', async (req, res, next) => {
-  if (!whitelist.includes(req.url) || /Template/.test(req.url)) {
-    await verifyToken(req, res, next)
-  } else {
-    next();
-  }
-})
+// app.all('/api/*', async (req, res, next) => {
+//   if (!whitelist.includes(req.url) || /Template/.test(req.url)) {
+//     await verifyToken(req, res, next)
+//   } else {
+//     next();
+//   }
+// })
 Router(app);
 
 app.listen(3000, () => {
