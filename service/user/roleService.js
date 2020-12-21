@@ -1,14 +1,14 @@
-const {sequelize, Duty, MenuModel} = require('../../models');
+const {sequelize, Roles, Duty} = require('../../models');
 const {success, error} = require('../../utils/notice');
 const Sequelize = require('sequelize');
 const {Op} = Sequelize;
 
 module.exports = {
-  createDuty: async (req, res, next) => {
+  create: async (req, res, next) => {
     const userInfo = req.userInfo;
     const t = await sequelize.transaction();
     try {
-      await Duty.findOrCreate({
+      await Roles.findOrCreate({
         where: {code: req.body.code},
         defaults: {
           ...req.body,
@@ -20,8 +20,6 @@ module.exports = {
         if (!created) {
           res.json(error(data, '职责已存在'));
         } else {
-          console.log(JSON.stringify(data))
-          data.setChildren(req.body.currentAuthorityId)
           res.json(success(data, '创建成功'))
         }
       })
@@ -31,9 +29,22 @@ module.exports = {
       next(e)
     }
   },
+  configDuty: async (req, res, next) => {
+    const t = await sequelize.transaction();
+    try {
+      await Roles.findOne({where: {id:req.query.id}, transaction: t}).then(data => {
+        data.setChildren(req.query.dutyIds.split(','));
+        res.json(success(data, '查询成功'))
+      })
+      await t.commit();
+    } catch (e) {
+      await t.rollback();
+      next(e)
+    }
+  },
   detail: async (req, res, next) => {
     try {
-      await Duty.findAll({
+      await Roles.findAll({
         where: {
           id: {
             [Op.in]: req.query.id.split(',')
@@ -41,7 +52,7 @@ module.exports = {
         },
         include: [
           {
-            model: MenuModel,
+            model: Duty,
             as: 'children',
             through: {
               attributes: []
@@ -49,10 +60,6 @@ module.exports = {
           }]
       }).then(data => {
         res.json(success(data, '查询成功'))
-        // data.getMenuModels({where: {id: 3}}).then(list => {
-        //   console.log(JSON.stringify(list))
-        //
-        // })
       })
     } catch (e) {
       next(e)

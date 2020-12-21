@@ -3,9 +3,27 @@ const xlsx = require('node-xlsx');
 const jwt = require('jsonwebtoken');
 const Sequelize = require('sequelize');
 const {Op} = Sequelize;
-const {User} = require('../../models');
+const {sequelize, User, Roles, Duty, MenuModel} = require('../../models');
+const {success, error} = require('../../utils/notice');
 
 module.exports = {
+  configRoles: async (req, res, next) => {
+    const t = await sequelize.transaction();
+    try {
+      await User.findByPk(req.query.id).then(data => {
+        if(data) {
+          data.setChildren(req.query.roleIds.split(','));
+          res.json(success(data, '配置成功'))
+        } else {
+          res.json(error(data, '没有用户'))
+        }
+      })
+      await t.commit();
+    } catch (e) {
+      await t.rollback();
+      next(e)
+    }
+  },
   userList: async (req, res, next) => {
     try {
       const {page, size, userName, name} = req.query;
@@ -153,8 +171,92 @@ module.exports = {
   },
   login: async (req, res, next) => {
     try{
-
-      await User.findOne({where: {userName: req.body.userName}}).then(user => {
+      const user = await User.findOne({
+        where: {userName: req.body.userName},
+        include: [
+          {
+            model: Roles,
+            as: 'children',
+            through: {
+              attributes: [],
+            },
+            // include: [
+            //   {
+            //     model: Duty,
+            //     as: 'children',
+            //     through: {
+            //       attributes: [],
+            //     },
+            //     include: [
+            //       {
+            //         model: MenuModel,
+            //         as: 'children',
+            //         through: {
+            //           attributes: [],
+            //         },
+            //       }
+            //     ]
+            //   }
+            // ]
+          }
+        ]
+      });
+      if (user.password === req.body.password) {
+        const roleIds = user.children.map(item => item.id);
+        const roleData = await Roles.findAll({
+          where: {
+            id: {
+              [Op.in]: roleIds,
+            }
+          },
+          include: [
+            {
+              model: Duty,
+              as: 'children',
+              through: {
+                attributes: [],
+              },
+            }
+          ]
+        })
+        let dutyList = [];
+        roleData.filter(item => item.children.length>0).forEach(duty => {
+           dutyList = [...dutyList, ...duty.children]
+        })
+        const dutyIds = dutyList.map(item => item.id);
+        const menuData = await Duty.findAll({
+          where: {
+            id: {
+              [Op.in]: dutyIds,
+            }
+          },
+          include: [
+            {
+              model: MenuModel,
+              as: 'children',
+              through: {
+                attributes: [],
+              },
+            }
+          ]
+        });
+        let menuList = [];
+        menuData.filter(item => item.children.length>0).forEach(menu => {
+          menuList = [...menuList, ...menu.children]
+        })
+        const token = jwt.sign({name: user.userName, id: user.id}, 'dingyongya');
+        await User.update({token, timeout: (new Date().getTime())+ 60*60*1000},{where:{id: user.id}});
+        user.token = token;
+        user.currentAuthority = [...new Set(menuList.map(item => item.code))];
+        const userData = JSON.parse(JSON.stringify(user))
+        delete userData.children;
+        res.json(success(userData, '登录成功'))
+      } else {
+        res.json({
+          message: '用户名或密码错误',
+        })
+      }
+     /* await User.findOne({where: {userName: req.body.userName}}).then(user => {
         if (user.password === req.body.password) {
           const token = jwt.sign({name: user.userName, id: user.id}, 'dingyongya');
           User.update({token, timeout: (new Date().getTime())+ 60*60*1000},{where:{id: user.id}}).then(() => {
@@ -169,7 +271,7 @@ module.exports = {
             message: '用户名或密码错误',
           })
         }
-      })
+      })*/
     }
     catch (err) {
       next(err);

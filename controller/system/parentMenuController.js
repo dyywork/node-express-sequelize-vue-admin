@@ -10,7 +10,7 @@ const {
 // 创建
 router.post('/createParentMenu', createParentMenu);
 
-router.get('/list', getList);
+router.get('/getList', getList);
 
 router.delete('/delete/:id', deleteMenu)
 router.get('/getCodeList', getCodeList)

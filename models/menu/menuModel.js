@@ -4,34 +4,25 @@ const {
 } = require('sequelize');
 const moment = require('moment');
 module.exports = (sequelize, DataTypes) => {
-  class Roles extends Model {
+  class MenuModel extends Model {
     /**
-     * 定义关联的辅助方法。
-     * 此方法不是Sequelize生命周期的一部分。
-     * 模型/索引文件将自动调用此方法。
+     * 定义关联的辅助方法.
+     * 此方法不是Sequelize生命周期的一部分.
+     * models/index文件将自动调用此方法.
      */
     static associate(models) {
-      // 在这里定义关联
-      const {Duty, Roles} = models;
-      Roles.belongsToMany(Duty, {through: 'rolesDuty', as: 'children'})
+      const { Duty } = models;
+      // MenuModel.belongsToMany(Duty, {through: 'DutyMenuModel'})
+      // SubMenu.belongsTo(ParentMenu);
+      // SubMenu.belongsToMany(ParentMenu, { through: 'ParentSubMenu' });
       // sequelize.sync({alter: true})
     }
   };
-  Roles.init({
-    code: {
-      type:DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: '职责编码不能为空'
-        }
-      }
-    },
+  MenuModel.init({
     name: DataTypes.STRING,
-    type: DataTypes.STRING,
-    creator: DataTypes.STRING,
-    creatorId: DataTypes.STRING,
-    status: DataTypes.STRING,
+    code: DataTypes.STRING,
+    url: DataTypes.STRING,
+    parentId: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),
@@ -49,10 +40,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     timestamps: true,
-    modelName: 'Roles',
+    modelName: 'MenuModel',
   });
   // (async () => {
-  //   await Roles.sync({ alter: true })
+  //   await SubMenu.sync({ alter: true })
   // })()
-  return Roles;
+  return MenuModel;
 };

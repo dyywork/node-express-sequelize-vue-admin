@@ -10,9 +10,11 @@ const {
   deleteUser,
   updateUser,
   getUserDetails,
-  login
+  login,
+  configRoles,
 } = require('../../service/user/user')
 
+router.get('/configRoles', configRoles);
 router.get('/list', userList);
 
 router.post('/img',upload.single('file'), uploadHeaderImg);
@@ -22,13 +24,13 @@ router.get('/export/list', exportUserList);
 router.post('/create',createUser);
 
 // 删除用户
-router.delete('/:id', deleteUser);
+router.delete('delete/:id', deleteUser);
 
 // 更新用户
 router.put('/update', updateUser);
 
 // 查询用户
-router.get('/:id', getUserDetails);
+router.get('detail/:id', getUserDetails);
 
 // 登录
 router.post('/login', login);

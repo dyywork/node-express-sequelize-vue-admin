@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      * 模型/索引文件将自动调用此方法。
      */
     static associate(models) {
-      const {Duty, Roles} = models;
+      const {Duty,Roles, MenuModel} = models;
+      Duty.belongsToMany(MenuModel, {through: 'DutyMenuModel', as: 'children'})
       Duty.belongsToMany(Roles, {through: 'rolesDuty'})
-//  sequelize.sync({alter: true})
+  // sequelize.sync({alter: true})
     }
   };
   Duty.init({

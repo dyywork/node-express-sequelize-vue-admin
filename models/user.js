@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       // 在这里定义关联
       // console.log(models)
       const { Roles } = models;
-      User.hasMany(Roles);
+      User.belongsToMany(Roles, {through: "userRoles", as: 'children'});
       // sequelize.sync({alter: true})
     }
   };

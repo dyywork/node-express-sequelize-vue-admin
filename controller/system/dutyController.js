@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const verifyToken = require('../../utils/verificationToken')
 const {
-  createDuty
+  createDuty,
+  detail,
 } = require('../../service/user/dutyService');
 
-router.post('/createDuty', verifyToken, createDuty);
+router.post('/createDuty', createDuty);
+router.get('/detail', detail);
 
 module.exports = router;
