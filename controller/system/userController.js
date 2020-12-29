@@ -12,6 +12,7 @@ const {
   getUserDetails,
   login,
   configRoles,
+  currentUser,
 } = require('../../service/user/user')
 
 router.get('/configRoles', configRoles);
@@ -34,5 +35,6 @@ router.get('detail/:id', getUserDetails);
 
 // 登录
 router.post('/login', login);
+router.get('/currentUser', currentUser);
 
 module.exports = router;
