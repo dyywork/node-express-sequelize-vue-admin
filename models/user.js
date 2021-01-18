@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     type: DataTypes.STRING,
     status: DataTypes.STRING,
     currentAuthority: DataTypes.STRING,
+    createName: DataTypes.STRING,
     timeout: DataTypes.DATE,
     createdAt: {
       type: DataTypes.DATE,

@@ -4,9 +4,11 @@ const {
   create,
   detail,
   configDuty,
+  getList,
 } = require('../../service/user/roleService');
 
 router.post('/createRole', create);
+router.get('/roleList', getList);
 router.get('/configDuty', configDuty);
 router.get('/detail', detail);
 

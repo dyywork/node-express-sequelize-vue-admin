@@ -26,31 +26,25 @@ module.exports = {
   },
   userList: async (req, res, next) => {
     try {
-      const {page, size, userName, name} = req.query;
+      const {current, pageSize, userName, name} = req.query;
       await User.findAndCountAll({
         where: {
-          [Op.or]: [
+          [Op.and]: [
             {
               userName: {
-                [Op.like]:`%${userName}%`,
-              }
-            },
-            {
-              name: {
-                [Op.like]:`%${name}%`,
+                [Op.like]:`%${userName|| ''}%`,
               }
             }
           ]
         },
-        limit: Number(size),
-        offset: Number(page-1)* Number(size)}).then(list => {
+        limit: Number(pageSize),
+        offset: Number(current-1)* Number(pageSize)}).then(list => {
         res.json({
           message: '查询成功',
-          list: {
-            ...list,
-            page: Number(page),
-            size: Number(size),
-          }
+          data: list.rows,
+          total: list.count,
+          current: Number(current),
+          pageSize: Number(pageSize),
         })
       })
     }
@@ -112,18 +106,28 @@ module.exports = {
     }
   },
   createUser: async (req, res, next) => {
+    let bodyObj = {};
+    if (req.userInfo !== null && req.userInfo !== undefined && req.body.id === undefined) {
+      const {name} = req.userInfo;
+      bodyObj = {...req.body, createName: name, password: 123456};
+    } else {
+      bodyObj = {...req.body};
+    }
+    console.log(req.body.id)
     try {
-      await User.findOrCreate({where: {userName: req.body.userName}, defaults: {...req.body, status: 'ok'}}).then(([user, created]) => {
-        if (created) {
-          res.json({
-            message: '创建成功',
-            user
-          });
-        }
-        res.json({
-          message: '用户名已经存在',
+      if (req.body.id === undefined) {
+        await User.findOrCreate({where: {userName: req.body.userName}, defaults: bodyObj}).then(([user, created]) => {
+          if (created) {
+            res.json(success(user, '创建成功'));
+          }
+          res.json(error(user, '用户名已存在'));
         });
-      });
+      } else {
+        await User.update(req.body,{where: {id: req.body.id}}).then(data => {
+          res.json(success(data, '编辑成功！'))
+        })
+      }
+
     }
     catch (err) {
       next();
@@ -169,6 +173,90 @@ module.exports = {
       next();
     }
   },
+  currentUser: async (req, res, next) => {
+    try{
+      const {id} = req.userInfo;
+      const user = await User.findOne({
+        where: {id: id},
+        include: [
+          {
+            model: Roles,
+            as: 'children',
+            through: {
+              attributes: [],
+            },
+          }
+        ]
+      });
+
+        const roleIds = user.children.map(item => item.id);
+        const roleData = await Roles.findAll({
+          where: {
+            id: {
+              [Op.in]: roleIds,
+            }
+          },
+          include: [
+            {
+              model: Duty,
+              as: 'children',
+              through: {
+                attributes: [],
+              },
+            }
+          ]
+        })
+        let dutyList = [];
+        roleData.filter(item => item.children.length>0).forEach(duty => {
+          dutyList = [...dutyList, ...duty.children]
+        })
+        const dutyIds = dutyList.map(item => item.id);
+        const menuData = await Duty.findAll({
+          where: {
+            id: {
+              [Op.in]: dutyIds,
+            }
+          },
+          include: [
+            {
+              model: MenuModel,
+              as: 'children',
+              through: {
+                attributes: [],
+              },
+            }
+          ]
+        });
+        let menuList = [];
+        menuData.filter(item => item.children.length>0).forEach(menu => {
+          menuList = [...menuList, ...menu.children]
+        })
+        user.currentAuthority = [...new Set(menuList.map(item => item.code))];
+        const userData = JSON.parse(JSON.stringify(user))
+        delete userData.children;
+        res.json(success(userData, '登录成功'))
+
+      /* await User.findOne({where: {userName: req.body.userName}}).then(user => {
+         if (user.password === req.body.password) {
+           const token = jwt.sign({name: user.userName, id: user.id}, 'dingyongya');
+           User.update({token, timeout: (new Date().getTime())+ 60*60*1000},{where:{id: user.id}}).then(() => {
+             user.token = token;
+             res.json({
+               message: '登录成功',
+               user
+             })
+           })
+         } else {
+           res.json({
+             message: '用户名或密码错误',
+           })
+         }
+       })*/
+    }
+    catch (err) {
+      next(err);
+    }
+  },
   login: async (req, res, next) => {
     try{
       const user = await User.findOne({
@@ -180,28 +268,28 @@ module.exports = {
             through: {
               attributes: [],
             },
-            // include: [
-            //   {
-            //     model: Duty,
-            //     as: 'children',
-            //     through: {
-            //       attributes: [],
-            //     },
-            //     include: [
-            //       {
-            //         model: MenuModel,
-            //         as: 'children',
-            //         through: {
-            //           attributes: [],
-            //         },
-            //       }
-            //     ]
-            //   }
-            // ]
+            /*include: [
+              {
+                model: Duty,
+                as: 'children',
+                through: {
+                  attributes: [],
+                },
+                include: [
+                  {
+                    model: MenuModel,
+                    as: 'children',
+                    through: {
+                      attributes: [],
+                    },
+                  }
+                ]
+              }
+            ]*/
           }
         ]
       });
-      if (user.password === req.body.password) {
+      if ( user && user.password === req.body.password) {
         const roleIds = user.children.map(item => item.id);
         const roleData = await Roles.findAll({
           where: {
@@ -252,26 +340,8 @@ module.exports = {
         delete userData.children;
         res.json(success(userData, '登录成功'))
       } else {
-        res.json({
-          message: '用户名或密码错误',
-        })
+        res.json(error(null, '用户名或密码错误'))
       }
-     /* await User.findOne({where: {userName: req.body.userName}}).then(user => {
-        if (user.password === req.body.password) {
-          const token = jwt.sign({name: user.userName, id: user.id}, 'dingyongya');
-          User.update({token, timeout: (new Date().getTime())+ 60*60*1000},{where:{id: user.id}}).then(() => {
-            user.token = token;
-            res.json({
-              message: '登录成功',
-              user
-            })
-          })
-        } else {
-          res.json({
-            message: '用户名或密码错误',
-          })
-        }
-      })*/
     }
     catch (err) {
       next(err);

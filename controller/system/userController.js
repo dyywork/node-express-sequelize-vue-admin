@@ -12,10 +12,12 @@ const {
   getUserDetails,
   login,
   configRoles,
+  currentUser,
 } = require('../../service/user/user')
 
 router.get('/configRoles', configRoles);
 router.get('/list', userList);
+router.get('/currentUser', currentUser);
 
 router.post('/img',upload.single('file'), uploadHeaderImg);
 // 导出用户列表

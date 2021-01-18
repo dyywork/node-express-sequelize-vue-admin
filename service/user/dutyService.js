@@ -4,6 +4,34 @@ const Sequelize = require('sequelize');
 const {Op} = Sequelize;
 
 module.exports = {
+  getList: async (req, res, next) => {
+    try {
+      const {current, pageSize, name} = req.query;
+      await Duty.findAndCountAll({
+        where: {
+          [Op.and]: [
+            {
+              name: {
+                [Op.like]:`%${name|| ''}%`,
+              }
+            }
+          ]
+        },
+        limit: Number(pageSize),
+        offset: Number(current-1)* Number(pageSize)}).then(list => {
+        res.json({
+          message: '查询成功',
+          data: list.rows,
+          total: list.count,
+          current: Number(current),
+          pageSize: Number(pageSize),
+        })
+      })
+    }
+    catch (err) {
+      next();
+    }
+  },
   createDuty: async (req, res, next) => {
     const userInfo = req.userInfo;
     const t = await sequelize.transaction();
@@ -12,8 +40,8 @@ module.exports = {
         where: {code: req.body.code},
         defaults: {
           ...req.body,
-          // creatorId: userInfo.id,
-          // creator: userInfo.name
+          creatorId: userInfo.id,
+          creator: userInfo.name
         },
         transaction: t,
       }).then(([data, created]) => {
