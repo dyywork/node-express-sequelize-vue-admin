@@ -76,7 +76,9 @@ module.exports = {
             },
           }]
       }).then(data => {
-        res.json(success(data, '查询成功'))
+        const dutyList = JSON.parse(JSON.stringify(data));
+        const ids = dutyList[0].children.map(item => item.id);
+        res.json(success({...dutyList[0], ids}, '查询成功'))
         // data.getMenuModels({where: {id: 3}}).then(list => {
         //   console.log(JSON.stringify(list))
         //

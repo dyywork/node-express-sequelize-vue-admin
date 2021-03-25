@@ -1,5 +1,6 @@
 const {sequelize, ParentMenu, SubMenu} = require('../../models');
 const Sequelize = require('sequelize');
+const {success, error} = require('../../utils/notice');
 const {Op} = Sequelize;
 module.exports = {
   createParentMenu: async (req, res, next) => {
@@ -39,10 +40,7 @@ module.exports = {
           },
         ]
       }).then(list => {
-        res.json({
-          list,
-          msg: '查询成功'
-        })
+        res.json(success(list, '查询成功'))
       })
     } catch (e) {
       res.json(e)

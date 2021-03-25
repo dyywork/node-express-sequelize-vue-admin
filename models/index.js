@@ -20,15 +20,18 @@ sequelize.authenticate().then(() => {
 }).catch(err => {
   console.error(`数据库连接${err}`);
 });
-// fs
-//   .readdirSync(__dirname)
-//   .filter(file => {
-//     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-//   })
-//   .forEach(file => {
-//     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-//     db[model.name] = model;
-//   });
+/*
+原始处理model文件方法
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
+*/
 const readFileList = (dir, filesList = []) => {
   const files = fs.readdirSync(dir);
   files.forEach((item, index) => {

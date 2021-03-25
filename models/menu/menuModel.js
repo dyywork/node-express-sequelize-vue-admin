@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     code: DataTypes.STRING,
     url: DataTypes.STRING,
     parentId: DataTypes.STRING,
+    order: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),
