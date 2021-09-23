@@ -26,7 +26,7 @@ module.exports = {
   },
   userList: async (req, res, next) => {
     try {
-      const {current, pageSize, userName, name} = req.query;
+      const {current=1, pageSize=10, userName} = req.query;
       await User.findAndCountAll({
         where: {
           [Op.and]: [
@@ -43,8 +43,7 @@ module.exports = {
           message: '查询成功',
           data: list.rows,
           total: list.count,
-          current: Number(current),
-          pageSize: Number(pageSize),
+          page: Number(current),
         })
       })
     }
@@ -127,7 +126,6 @@ module.exports = {
           res.json(success(data, '编辑成功！'))
         })
       }
-
     }
     catch (err) {
       next();
