@@ -1,6 +1,7 @@
 const { sequelize, MenuModel } = require('../../models');
 const { success, error } = require('../../utils/notice');
-const { compare, generateTree } =require('../../utils/index')
+import { compare, generateTree } from '@/utils/index'
+
 
 module.exports = {
   list: async (req, res, next) => {
@@ -10,7 +11,6 @@ module.exports = {
           ['order'],
         ]
       });
-
       data.sort(compare("order"))
       const list = await generateTree(data, {pId: 'parentId', id: 'id'})
       res.json(success(list, '查询成功'));

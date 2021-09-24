@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const verifyToken = require('../utils/verificationToken')
 const Router = require('../controller/api');
-
+require('module-alias/register')
 
 app.use(bodyParser.json());
 
