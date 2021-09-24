@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     code: {type:DataTypes.STRING, allowNull: false},
     url: DataTypes.STRING,
+    icon: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),
@@ -39,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     timestamps: true,
     modelName: 'ParentMenu',
+    // tableName: "" // 数据库表名设置
   });
   // (async () => {
   //   await ParentMenu.sync({ alter: true })

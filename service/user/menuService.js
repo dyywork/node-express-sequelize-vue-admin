@@ -1,23 +1,19 @@
 const { sequelize, MenuModel } = require('../../models');
 const { success, error } = require('../../utils/notice');
+const { compare, generateTree } =require('../../utils/index')
 
 module.exports = {
   list: async (req, res, next) => {
     try {
-      await MenuModel.findAll({
+      const data = await MenuModel.findAll({
         order: [
           ['order'],
         ]
-      }).then(data => {
-        const list = data.filter((item) => item.parentId === '' || item.parentId === null);
-        list.forEach((item, index) => {
-          list[index] = {
-            ...JSON.parse(JSON.stringify(item)),
-            children:data.filter(user => item.id == user.parentId),
-          }
-        })
-        res.json(success(list, '查询成功'));
-      })
+      });
+
+      data.sort(compare("order"))
+      const list = await generateTree(data, {pId: 'parentId', id: 'id'})
+      res.json(success(list, '查询成功'));
     } catch (e) {
       next(e)
     }
@@ -40,7 +36,7 @@ module.exports = {
           }
         ).then(([data, created]) => {
           if (!created) {
-            res.json(error(data, '编码不能重复'))
+            res.json(error('', '编码不能重复'))
           } else {
             res.json(success(data, '创建成功'))
           }

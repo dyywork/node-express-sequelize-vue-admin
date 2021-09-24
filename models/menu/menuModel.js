@@ -15,15 +15,18 @@ module.exports = (sequelize, DataTypes) => {
       // MenuModel.belongsToMany(Duty, {through: 'DutyMenuModel'})
       // SubMenu.belongsTo(ParentMenu);
       // SubMenu.belongsToMany(ParentMenu, { through: 'ParentSubMenu' });
-      // sequelize.sync({alter: true})
+       // sequelize.sync({alter: true})
+
     }
   };
   MenuModel.init({
-    name: DataTypes.STRING,
-    code: DataTypes.STRING,
+    name: {type:DataTypes.STRING, allowNull: false},
+    code: {type:DataTypes.STRING, allowNull: false},
     url: DataTypes.STRING,
-    parentId: DataTypes.STRING,
-    order: DataTypes.STRING,
+    icon: DataTypes.STRING,
+    parentId: DataTypes.INTEGER,
+    order: DataTypes.INTEGER,
+    children: DataTypes.VIRTUAL, // 虚拟字段，数据库里没有
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),

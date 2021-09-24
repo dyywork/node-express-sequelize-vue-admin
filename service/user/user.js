@@ -332,11 +332,17 @@ module.exports = {
         })
         const token = jwt.sign({name: user.userName, id: user.id}, 'dingyongya');
         await User.update({token, timeout: (new Date().getTime())+ 60*60*1000},{where:{id: user.id}});
+        const objectUser = await User.findOne({
+          attributes: ['token'],
+          where: {
+            id: user.id
+          }
+        })
         user.token = token;
         user.currentAuthority = [...new Set(menuList.map(item => item.code))];
         const userData = JSON.parse(JSON.stringify(user))
         delete userData.children;
-        res.json(success(userData, '登录成功'))
+        res.json(success(objectUser, '登录成功'))
       } else {
         res.json(error(null, '用户名或密码错误'))
       }

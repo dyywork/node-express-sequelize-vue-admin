@@ -5,7 +5,10 @@
     "database": "sequelize",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "timezone": "+08:00"
+    "timezone": "+08:00",
+    "define": {
+
+    }
   },
   "test": {
     "username": "root",
