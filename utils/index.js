@@ -28,4 +28,18 @@ export function generateTree (treeData, props = {pId: 'pId', id: 'id'}) {
     return tmpTree
 }
 
-
+export function getIds (data, ids){ //遍历树  获取id数组
+    data.forEach(item => {
+        if(ids.includes(item.parentId)) {
+            ids.push(item.id)
+            if(item.children.length> 0) {
+                getIds(item.children, ids)
+            }
+        } else {
+            if(item.children.length> 0) {
+                getIds(item.children, ids)
+            }
+        }
+    })
+    return ids
+}

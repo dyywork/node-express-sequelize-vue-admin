@@ -46,10 +46,9 @@ module.exports = {
         transaction: t,
       }).then(([data, created]) => {
         if (!created) {
-          res.json(error(data, '职责已存在'));
+          res.json(error('', '职责已存在'));
         } else {
-          console.log(JSON.stringify(data))
-          data.setChildren(req.body.currentAuthorityId)
+          data.setChildren(req.body.menuId.split(','))
           res.json(success(data, '创建成功'))
         }
       })
@@ -71,6 +70,7 @@ module.exports = {
           {
             model: MenuModel,
             as: 'children',
+            attributes: ['id'],
             through: {
               attributes: []
             },

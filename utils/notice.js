@@ -3,7 +3,7 @@ module.exports = {
     return {
       data: data,
       code: 200,
-      msg,
+      msg: msg || '请求成功！',
     }
   },
   error: (data, msg) => {
