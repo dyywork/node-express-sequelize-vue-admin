@@ -3,3 +3,5 @@ uploads
 importFiles
 doc
 package-lock.json
+.idea
+yarn-error.log
