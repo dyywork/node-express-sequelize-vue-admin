@@ -18,9 +18,20 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   SubMenu.init({
-    name: DataTypes.STRING,
+    title: DataTypes.STRING, // 菜单标题
+    name: DataTypes.STRING, // 组件名称
+    component: DataTypes.STRING, // 组件路径
     code: DataTypes.STRING,
-    url: DataTypes.STRING,
+    url: DataTypes.STRING, // 路由地址
+    sort: {
+      type: DataTypes.INTEGER,
+      comment: '排序字段'
+    },
+    hidden: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      comment: '是否隐藏'
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),

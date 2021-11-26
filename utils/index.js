@@ -1,5 +1,6 @@
 
-export function compare (prop) {
+
+function compare (prop) {
     return function (obj1, obj2) {
         var val1 = obj1[prop];
         var val2 = obj2[prop];
@@ -13,7 +14,7 @@ export function compare (prop) {
     }
 }
 
-export function generateTree (treeData, props = {pId: 'pId', id: 'id'}) {
+function generateTree (treeData, props = {pId: 'pId', id: 'id'}) {
     const tmpTree = treeData.filter(node => node[props.pId] === null || node[props.pId] === '')
     // 递归生成节点及子节点数据
     const findChildren = (tree) => {
@@ -28,7 +29,7 @@ export function generateTree (treeData, props = {pId: 'pId', id: 'id'}) {
     return tmpTree
 }
 
-export function getIds (data, ids){ //遍历树  获取id数组
+function getIds (data, ids){ //遍历树  获取id数组
     data.forEach(item => {
         if(ids.includes(item.parentId)) {
             ids.push(item.id)
@@ -43,3 +44,4 @@ export function getIds (data, ids){ //遍历树  获取id数组
     })
     return ids
 }
+module.exports = {compare, generateTree, getIds}

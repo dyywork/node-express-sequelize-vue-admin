@@ -1,6 +1,6 @@
 const { sequelize, MenuModel } = require('../../models');
 const { success, error } = require('../../utils/notice');
-import { compare, generateTree, getIds } from '@/utils/index'
+const { compare, generateTree, getIds } = require('@/utils/index')
 
 module.exports = {
   list: async (req, res, next) => {

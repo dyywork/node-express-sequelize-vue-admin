@@ -15,13 +15,16 @@ module.exports = (sequelize, DataTypes) => {
       MenuModel.belongsToMany(Duty, {through: 'DutyMenuModel'})
       // SubMenu.belongsTo(ParentMenu);
       // SubMenu.belongsToMany(ParentMenu, { through: 'ParentSubMenu' });
-      // sequelize.sync({alter: true})
+    // sequelize.sync({alter: true})
 
     }
   };
   MenuModel.init({
-    name: {type:DataTypes.STRING, allowNull: false},
-    code: {type:DataTypes.STRING, allowNull: false},
+    name: {type:DataTypes.STRING, allowNull: false, comment: '组件名称'},
+    code: {type:DataTypes.STRING, allowNull: false, comment: '组件编码'},
+    title: {type:DataTypes.STRING, comment: '菜单标题'},
+    component: {type:DataTypes.STRING, comment:'组件路径'},
+    hidden: {type:DataTypes.BOOLEAN, defaultValue: false},
     url: DataTypes.STRING,
     icon: DataTypes.STRING,
     parentId: DataTypes.INTEGER,

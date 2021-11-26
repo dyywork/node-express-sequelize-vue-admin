@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"nodemon src/app.js\" \"npm run doc\"",
-    "dev": "nodemon src/app.js --exec babel-node",
+    "dev": "nodemon src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "doc": "gulp watch"
   },

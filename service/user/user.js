@@ -112,7 +112,6 @@ module.exports = {
     } else {
       bodyObj = {...req.body};
     }
-    console.log(req.body.id)
     try {
       if (req.body.id === undefined) {
         await User.findOrCreate({where: {userName: req.body.userName}, defaults: bodyObj}).then(([user, created]) => {
