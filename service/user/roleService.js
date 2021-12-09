@@ -47,7 +47,7 @@ module.exports = {
         transaction: t,
       }).then(([data, created]) => {
         if (!created) {
-          res.json(error(data, '职责已存在'));
+          res.json(error(data, '角色已存在'));
         } else {
           res.json(success(data, '创建成功'))
         }
@@ -61,8 +61,8 @@ module.exports = {
   configDuty: async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
-      await Roles.findOne({where: {id:req.query.id}, transaction: t}).then(data => {
-        data.setChildren(req.query.dutyIds.split(','));
+      await Roles.findOne({where: {id:req.body.id}, transaction: t}).then(data => {
+        data.setChildren(req.body.dutyIds.toString());
         res.json(success(data, '查询成功'))
       })
       await t.commit();

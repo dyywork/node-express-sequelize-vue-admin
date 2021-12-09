@@ -9,7 +9,7 @@ const {
 
 router.post('/createRole', create);
 router.get('/roleList', getList);
-router.get('/configDuty', configDuty);
+router.post('/configDuty', configDuty);
 router.get('/detail', detail);
 
 module.exports = router;

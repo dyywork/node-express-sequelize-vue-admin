@@ -25,13 +25,13 @@ app.all('*', function(req, res, next) {
     next();
   }
 });
-// app.all('/api/*', async (req, res, next) => {
-//   if (!whitelist.includes(req.url) || /Template/.test(req.url)) {
-//     await verifyToken(req, res, next)
-//   } else {
-//     next();
-//   }
-// })
+app.all('/api/*', async (req, res, next) => {
+  if (!whitelist.includes(req.url) || /Template/.test(req.url)) {
+    await verifyToken(req, res, next)
+  } else {
+    next();
+  }
+})
 Router(app);
 
 app.listen(3000, () => {

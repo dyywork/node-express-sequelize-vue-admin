@@ -8,11 +8,12 @@ const {success, error} = require('../../utils/notice');
 
 module.exports = {
   configRoles: async (req, res, next) => {
+    const {id} = req.userInfo;
     const t = await sequelize.transaction();
     try {
-      await User.findByPk(req.query.id).then(data => {
+      await User.findByPk(id).then(data => {
         if(data) {
-          data.setChildren(req.query.roleIds.split(','));
+          data.setChildren(req.body.roleIds.toString());
           res.json(success(data, '配置成功'))
         } else {
           res.json(error(data, '没有用户'))
@@ -175,6 +176,7 @@ module.exports = {
       const {id} = req.userInfo;
       const user = await User.findOne({
         where: {id: id},
+        attributes: { exclude: ['password', 'timeout', 'createName', 'children'] },
         include: [
           {
             model: Roles,
@@ -182,6 +184,26 @@ module.exports = {
             through: {
               attributes: [],
             },
+            // include:  [
+            //   {
+            //     model: Duty,
+            //     as: 'children',
+            //     attributes: ['id'],
+            //     through: {
+            //       attributes: [],
+            //     },
+            //     include: [
+            //       {
+            //         model: MenuModel,
+            //         as: 'children',
+            //         attributes: ['id', 'code'],
+            //         through: {
+            //           attributes: [],
+            //         },
+            //       }
+            //     ]
+            //   }
+            // ]
           }
         ]
       });
@@ -231,7 +253,7 @@ module.exports = {
         user.currentAuthority = [...new Set(menuList.map(item => item.code))];
         const userData = JSON.parse(JSON.stringify(user))
         delete userData.children;
-        res.json(success(userData, '登录成功'))
+        res.json(success(userData, '请求成功'))
 
       /* await User.findOne({where: {userName: req.body.userName}}).then(user => {
          if (user.password === req.body.password) {

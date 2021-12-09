@@ -26,7 +26,7 @@ router.get('/detail/:id', getUserDetails);
 // 查询用户列表
 router.get('/list', userList);
 // 配置用户角色
-router.get('/configRoles', configRoles);
+router.post('/configRoles', configRoles);
 // 获取用户信息
 router.get('/currentUser', currentUser);
 // 上传用户头像
