@@ -14,7 +14,8 @@ const {
   configRoles,
   currentUser,
 } = require('../../service/user/user')
-
+// 登录
+router.post('/login', login);
 // 创建用户
 router.post('/create',createUser);
 // 删除用户
@@ -34,7 +35,6 @@ router.post('/img',upload.single('file'), uploadHeaderImg);
 // 导出用户列表
 router.get('/export/list', exportUserList);
 
-// 登录
-router.post('/login', login);
+
 
 module.exports = router;

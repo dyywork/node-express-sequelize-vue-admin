@@ -62,7 +62,7 @@ module.exports = {
     const t = await sequelize.transaction();
     try {
       await Roles.findOne({where: {id:req.body.id}, transaction: t}).then(data => {
-        data.setChildren(req.body.dutyIds.toString());
+        data.setChildren(req.body.dutyIds);
         res.json(success(data, '查询成功'))
       })
       await t.commit();

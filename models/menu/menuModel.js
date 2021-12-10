@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       MenuModel.belongsToMany(Duty, {through: 'DutyMenuModel'})
       // SubMenu.belongsTo(ParentMenu);
       // SubMenu.belongsToMany(ParentMenu, { through: 'ParentSubMenu' });
-    // sequelize.sync({alter: true})
+     // sequelize.sync({alter: true})
 
     }
   };
@@ -27,9 +27,21 @@ module.exports = (sequelize, DataTypes) => {
     hidden: {type:DataTypes.BOOLEAN, defaultValue: false},
     url: DataTypes.STRING,
     icon: DataTypes.STRING,
-    parentId: DataTypes.INTEGER,
+    parentId: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     order: DataTypes.INTEGER,
     children: DataTypes.VIRTUAL, // 虚拟字段，数据库里没有
+    meta: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return {
+          title: this.getDataValue('name'),
+          icon: this.getDataValue('icon')
+        }
+      }
+    }, // 虚拟字段，数据库里没有
     createdAt: {
       type: DataTypes.DATE,
       defaultValue:new Date(),

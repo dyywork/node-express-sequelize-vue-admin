@@ -1,19 +1,21 @@
 const express = require('express');
 // 用于req.body获取值的
-const bodyParser = require('body-parser');
+ const bodyParser = require('body-parser');
 const app = express();
 const verifyToken = require('../utils/verificationToken')
 const Router = require('../controller/api');
 require('module-alias/register')
 
-app.use(bodyParser.json());
+app.use(express.json({limit: '50m'}))
 
-// 创建 application/x-www-form-urlencoded 编码解析 如果你传输的内容不是string类型时 extended: true;
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false, limit: '50m' }))
+
+// app.use(bodyParser.json({ limit: '50mb' }));
+// app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use('/uploads', express.static('uploads'));
 app.use('/doc', express.static('doc'));
-const whitelist = ['/api/user/login', '/api/user/create'];
+const whitelist = ['/api/user/login', '/api/user/create',];
 app.all('*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, token, authorization, Accept, X-Requested-With , yourHeaderFeild');

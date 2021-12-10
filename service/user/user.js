@@ -13,7 +13,7 @@ module.exports = {
     try {
       await User.findByPk(id).then(data => {
         if(data) {
-          data.setChildren(req.body.roleIds.toString());
+          data.setChildren(req.body.roleIds);
           res.json(success(data, '配置成功'))
         } else {
           res.json(error(data, '没有用户'))
@@ -42,6 +42,7 @@ module.exports = {
         offset: Number(current-1)* Number(pageSize)}).then(list => {
         res.json({
           message: '查询成功',
+          code: 200,
           data: list.rows,
           total: list.count,
           page: Number(current),
@@ -184,26 +185,26 @@ module.exports = {
             through: {
               attributes: [],
             },
-            // include:  [
-            //   {
-            //     model: Duty,
-            //     as: 'children',
-            //     attributes: ['id'],
-            //     through: {
-            //       attributes: [],
-            //     },
-            //     include: [
-            //       {
-            //         model: MenuModel,
-            //         as: 'children',
-            //         attributes: ['id', 'code'],
-            //         through: {
-            //           attributes: [],
-            //         },
-            //       }
-            //     ]
-            //   }
-            // ]
+            include:  [
+              {
+                model: Duty,
+                as: 'children',
+                attributes: ['id'],
+                through: {
+                  attributes: [],
+                },
+                include: [
+                  {
+                    model: MenuModel,
+                    as: 'children',
+                    attributes: ['id', 'code'],
+                    through: {
+                      attributes: [],
+                    },
+                  }
+                ]
+              }
+            ]
           }
         ]
       });
@@ -253,7 +254,7 @@ module.exports = {
         user.currentAuthority = [...new Set(menuList.map(item => item.code))];
         const userData = JSON.parse(JSON.stringify(user))
         delete userData.children;
-        res.json(success(userData, '请求成功'))
+        res.json(success(user, '请求成功'))
 
       /* await User.findOne({where: {userName: req.body.userName}}).then(user => {
          if (user.password === req.body.password) {
